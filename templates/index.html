@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>OTP Login</title>
+    <style>
+    /* Add some basic styling to the forms */
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 auto;
+        width: 50%;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    input {
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: none;
+    }
+
+    /* Style the Request OTP button */
+    #email-form button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+    /* Style the Verify OTP button */
+    #otp-form button {
+        background-color: #f44336;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+    body {
+        background-color: lightblue;
+    }
+    /* Add some hover effect to the buttons */
+    button:hover {
+        opacity: 0.8;
+    }
+
+    /* Style the email display */
+    #email-display {
+        margin: 20px 0;
+        font-weight: bold;
+        font-size: 1.5em;
+    }
+</style>
+  </head>
+  <body>
+
+    <form id="email-form" >
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+      <button type="button" id="request_otp_button" onclick="requestOtp()">Request OTP</button>
+    </form>
+
+    <br/>
+
+    <form id="otp-form" >
+      <label for="otp">OTP:</label>
+      <input type="text" id="otp" name="otp" required>
+      <button type="button" onclick="verifyOtp()">Verify OTP</button>
+    </form>
+
+    <script>
+
+   // Get the form elements
+    const emailForm = document.getElementById("email-form");
+    const otpForm = document.getElementById("otp-form");
+    const emailInput = document.getElementById("email");
+    const otpInput = document.getElementById("otp");
+
+      // Function to handle requesting OTP
+    function requestOtp() {
+        // Get the email address from the input field
+        const email = document.getElementById("email").value;
+        // Check if the email address is valid
+        if (validateEmail(email)) {
+            // Make a POST request to the backend to generate the OTP
+            fetch("http://127.0.0.1:8000/generate-otp/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Error generating OTP, please try again.");
+                }
+            })
+            .then(data => {
+                // Show the OTP form and hide the email form
+                //document.getElementById("email-form").style.display = "none";
+                //document.getElementById("otp-form").style.display = "block";
+                // Enable the verify OTP button
+                alert(`OTP has been generated and sent to ${email}`);
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+        } else {
+            alert("Please enter a valid email address.");
+        }
+    }
+
+    // Function to validate email address
+    function validateEmail(email) {
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+// Function to handle verifying OTP
+function verifyOtp() {
+    // Get the OTP from the input field
+    const otp = document.getElementById("otp").value;
+    const email = document.getElementById("email").value;
+
+    console.log(document.getElementById('otp').value); // javascript
+    const formData = new FormData();
+    formData.append("otp", otp);
+    // Make a POST request to the backend to verify the OTP
+
+    fetch("http://127.0.0.1:8000/verify-otp/", {
+    method: "POST",
+    body: formData
+})
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error("Error verifying OTP, please try again.");
+        }
+    })
+    .then(data => {
+        if (data.status === "success") {
+            alert(`logged in as ${email}`)
+        } else {
+            alert("Invalid OTP, please try again.");
+            document.getElementById("request_otp_button").innerHTML = "Request Another OTP";
+
+        }
+    })
+    .catch(error => {
+        alert(error.message);
+    });
+}
+
+    </script>
+  </body>
+</html>
+
