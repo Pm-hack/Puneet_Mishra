@@ -1,4 +1,4 @@
-#Email Login
+# Email Login
 This is a simple OTP login project that demonstrates how to create a secure login process using One-Time Passwords (OTP).
 
 **Features**
@@ -14,7 +14,7 @@ This is a simple OTP login project that demonstrates how to create a secure logi
 **Installation**
 - Clone the repository
 
-`git clone https://github.com/[username]/otp-login.git`
+`git clone https://github.com/Pm-hack/Puneet_Mishra.git`
 
 - Run the development server
 
@@ -33,3 +33,4 @@ This is a simple OTP login project that demonstrates how to create a secure logi
 - Commit your changes (git commit -am 'Add new feature')
 - Push to the branch (git push origin feature/new-feature)
 - Create a new Pull Request
+
